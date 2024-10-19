@@ -1,13 +1,19 @@
 const express = require("express");
 const app = express();
 const fs = require('fs');
+const {
+    ListUsers, UserById, CreateUser, UpdateUser, DeleteUser
+} = require('./controllers/UserController');
 
-app.get('/post/:slug', (request, response) => {
-    let slug = request.params.slug;
-    response.json({
-        title: slug
-    });
+app.get('/', (request, response) => {
+    response.end("Api backend do blog 2");
 });
+
+app.get('/users', ListUsers);
+app.get('/users/:id', UserById);
+app.post('/users', CreateUser);
+app.put('/users/:id', UpdateUser);
+app.delete('/users/:id', DeleteUser);
 
 
 
