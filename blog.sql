@@ -1,56 +1,76 @@
-drop database if exists blog;
-create database if not exists blog;
+DROP DATABASE IF EXISTS store;
+CREATE DATABASE IF NOT EXISTS store;
 
-create table blog.users (
-	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    firstname VARCHAR(50) NOT NULL,
-    surname VARCHAR (50) NOT NULL,
-    username VARCHAR(50) NOT NULL,
-    email VARCHAR(255) NOT NULL,
+DROP TABLE IF EXISTS store.user;
+CREATE TABLE IF NOT EXISTS store.user (
+	id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    firstname VARCHAR(45) NOT NULL,
+    surname VARCHAR(45) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-	created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	UNIQUE username_unique (username ASC),
-    UNIQUE email_unique (email ASC)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
 );
 
-create table blog.user_address (
-	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL UNIQUE,
-    postcode VARCHAR(8) NOT NULL,
-    street VARCHAR(255) NOT NULL,
-    number VARCHAR(10) NOT NULL,
-    complement VARCHAR(255),
-    region VARCHAR(50),
-    province VARCHAR(50),
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_user_address_users 
-		FOREIGN KEY (user_id) 
-        REFERENCES blog.users(id)
-        ON DELETE CASCADE
-        ON UPDATE NO ACTION
+DROP TABLE IF EXISTS store.product;
+CREATE TABLE IF NOT EXISTS store.product (
+	id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    price DECIMAL(5, 2) NOT NULL,
+    slug VARCHAR(255) NOT NULL,
+    description TEXT,
+    price_with_discount DECIMAL(5, 2),
+    enabled BOOLEAN DEFAULT 0 NOT NULL,
+    stock INT UNSIGNED DEFAULT 0 NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-create table blog.posts (
-	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-	title VARCHAR(50) NOT NULL,
-    content TEXT,
-    image VARCHAR(255),
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES blog.users(id) ON DELETE CASCADE
+DROP TABLE IF EXISTS store.product_option;
+CREATE TABLE IF NOT EXISTS store.product_option (
+	id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    product_id INT UNSIGNED NOT NULL,
+    title VARCHAR(20) NOT NULL,
+    shape ENUM("square", "circle") NOT NULL DEFAULT "square",
+    radius INT UNSIGNED DEFAULT 0 NOT NULL,
+    type ENUM("text", "color") NOT NULL DEFAULT "text",
+    `values` VARCHAR(255) NOT NULL,
+    CONSTRAINT fk_product_product_option
+    FOREIGN KEY (product_id)
+    REFERENCES store.product(id)
+    ON DELETE CASCADE
 );
 
-create table blog.tags (
-	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50)
+DROP TABLE IF EXISTS store.product_image;
+CREATE TABLE IF NOT EXISTS store.product_image (
+	id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    product_id INT UNSIGNED NOT NULL,
+    path VARCHAR(255) NOT NULL,
+    CONSTRAINT fk_product_product_image
+    FOREIGN KEY (product_id) 
+    REFERENCES store.product(id)
+    ON DELETE CASCADE
 );
 
-create table blog.posts_tags (
-	post_id INT NOT NULL,
-    tag_id INT NOT NULL,
-    FOREIGN KEY (post_id) REFERENCES blog.posts(id) ON DELETE CASCADE,
-    FOREIGN KEY (tag_id) REFERENCES blog.tags(id) ON DELETE CASCADE
+DROP TABLE IF EXISTS store.category;
+CREATE TABLE IF NOT EXISTS store.category (
+	id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    name VARCHAR(45) NOT NULL,
+    slug VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+DROP TABLE IF EXISTS store.product_category;
+CREATE TABLE IF NOT EXISTS store.product_category (
+	product_id INT UNSIGNED NOT NULL,
+    category_id INT UNSIGNED NOT NULL,
+    CONSTRAINT fk_product_product_category
+    FOREIGN KEY (product_id)
+    REFERENCES store.product(id)
+    ON DELETE CASCADE,
+    CONSTRAINT fk_category_product_category
+    FOREIGN KEY (category_id)
+    REFERENCES store.category(id)
+    ON DELETE CASCADE
 );
