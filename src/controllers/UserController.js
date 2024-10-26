@@ -1,43 +1,102 @@
 const UserModel = require('../models/UserModel');
 
 const CreateUser = async (request, response) => {
-    console.log(123)
     try {
         await UserModel.create(request.body);
         response.status(201);
-        response.json({message: "Usuario criado com sucesso"});
+        return response.json({message: "Usuario criado com sucesso"});
     } catch (error) {
         console.log(error.message);
         response.status(400);
-        response.json({message: "Erro ao criar usuario"});
+        return response.json({message: "Erro ao criar usuario"});
     }
 }
 
 const ListUsers = async (request, response) => {
     try {
-        const users = await UserModel.findAll();
+        const users = await UserModel.findAll({
+            attributes: {
+                exclude: ["password"]
+            }
+        });
         return response.json(users);
     } catch (error) {
         response.status(500);
-        response.json({message: "Ocorreu um erro no servidor. Entre em contato com o suporte"})
+        return response.json({message: "Ocorreu um erro no servidor. Entre em contato com o suporte"})
     }
 }
 
-const UserById = (request, response) => {
-    // Essa função deve retorna apenas 1 usuario, e esse usuario deve ser o mesmo do ID que
-    // for passado no url
-    response.end("GET /users/:id");
+const UserById = async (request, response) => {
+    try {
+        let {id} = request.params;
+        let user = await UserModel.findByPk(id, {
+            attributes: {
+                exclude: ["password"]
+            }
+        });
+
+        if(!user) {
+            response.status(404);
+            return response.json({
+                message: "Usuario não encontrado"
+            });
+        }
+
+        return response.json(user);
+    } catch(error) {
+        response.status(500);
+        return response.json({
+            message: "Ocorreu um erro no servidor. Entre em contato com o suporte"
+        });
+    }
 }
 
-const UpdateUser = (request, response) => {
-    // Essa função deve receber um body e um ID na url, e com essas informações deve
-    // atualizar o usuario que é dono do ID que foi passado na url
-    response.end("PUT /users/:id")
+const UpdateUser = async (request, response) => {
+    try {
+        let {id} = request.params;
+        let {body} = request;
+        let [total] = await UserModel.update(body, {
+            where: {id}
+        });
+
+        if(total <= 0) {
+            response.status(404);
+            return response.json({
+                message: "Usuario não encontrado"
+            });
+        }
+
+        return response.status(204).end()        
+    } catch (error) {
+        response.status(500);
+        return response.json({
+            message: "Ocorreu um erro no servidor. Entre em contato com o suporte"
+        });
+    }
 }
 
-const DeleteUser = (request, response) => {
-    // Essa função deve receber um ID na url e deletar do banco o usairo que tiver o mesmo ID
-    response.end("DELETE /users/:id");
+const DeleteUser = async (request, response) => {
+    try {
+        let {id} = request.params;
+        let total = await UserModel.destroy({
+            where: {id}
+        });
+
+        if(total <= 0) {
+            response.status(404);
+            return response.json({
+                message: "Usuario não encontrado"
+            });
+        }
+        return response.json({
+            message: "Usuario deletado com sucesso"
+        });
+    } catch (error) {
+        response.status(500);
+        return response.json({
+            message: "Ocorreu um erro no servidor. Entre em contato com o suporte"
+        });
+    }
 }
 
 module.exports = {

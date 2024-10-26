@@ -1,12 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=
     , initial-scale=1.0">
     <title>Document</title>
+    
 </head>
 <body>
-    
+    <form action="">
+        <label for="">Escolha uma imagem</label>
+        <br>
+        <input type="file" id="upload">
+        <hr>
+        <div id="preview"></div>
+    </form>
+
+
+    <script>
+        let upload = document.getElementById('upload');
+        let preview = document.getElementById('preview')
+        upload.addEventListener('change', (event) => {
+            let file = event.target.files[0];
+            
+            let reader = new FileReader;
+
+            reader.onload = function (data) {
+                preview.innerHTML = `
+                    <img src="${data.target.result}" width="200px">
+                `;
+            }
+
+            reader.re(file);
+
+            console.log(event);
+        });
+    </script>
 </body>
 </html>
