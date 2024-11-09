@@ -8,6 +8,10 @@ const {
     ListUsers, UserById, CreateUser, UpdateUser, DeleteUser
 } = require('./controllers/UserController');
 
+const {
+    CreatePost
+} = require('./controllers/PostController');
+
 app.get('/', (request, response) => {
     response.end("Api backend do blog 2");
 });
@@ -17,6 +21,8 @@ app.get('/users/:id', UserById);
 app.post('/users', CreateUser);
 app.put('/users/:id', UpdateUser);
 app.delete('/users/:id', DeleteUser);
+
+app.post("/posts", CreatePost);
 
 
 
