@@ -17,7 +17,6 @@ async function execute() {
     let extension = mimeTypeMap[mimeType];
     let buffer = await response.arrayBuffer();
     buffer = Buffer.from(buffer, 'binary');
-    console.log(buffer)
     fs.writeFileSync(`teste.${extension}`, buffer, {
         encoding: 'binary'
     });

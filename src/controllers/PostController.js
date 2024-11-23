@@ -42,15 +42,28 @@ const CreatePost = async (request, response) => {
             });
         }
         
-        // upload por URL
+        if(type === 'url') {
+            let response = await fetch(content);
+            let mimeType = response.headers.get('content-type');
+            let extension = mimeTypeMap[mimeType];
+            if(!extension) {
+                throw new Error("Tipo de arquivo da url inválido");
+            }
+            let buffer = await response.arrayBuffer();
+            buffer = Buffer.from(buffer, 'binary');
+            filename = `${filename}.${extension}`;
+            fs.writeFileSync(`${directory}/${filename}`, buffer, {
+                encoding: 'binary'
+            });
+        }
 
-        await PostsModel.create({
+        let post = await PostsModel.create({
             user_id,
             title,
             image: filename
         });
 
-        return response.json("Post criado");
+        return response.json(post);
     } catch (error) {
         console.log(error.message);
         response.status(400);
