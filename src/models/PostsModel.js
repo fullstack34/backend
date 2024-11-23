@@ -17,6 +17,10 @@ const PostsModel = connection.define('PostsModel', {
     type: DataTypes.STRING(50),
     allowNull: false
   },
+  slug: {
+    type: DataTypes.STRING(255),
+    allowNull: true
+  },
   content: DataTypes.TEXT,
   image: DataTypes.STRING(255)
 }, {
