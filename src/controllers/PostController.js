@@ -1,8 +1,7 @@
 const fs = require('fs');
-const path = require('path');
 const PostsModel = require('../models/PostsModel');
 const {getImagesPath, makeDirIfNotExists} = require('../ultils/PathHandler');
-const {saveByBase64} = require('../service/ImageUpload');
+const {saveByBase64, saveByUrl} = require('../service/ImageUpload');
 
 const CreatePost = async (request, response) => {
     let {type, mime, content} = request.body.image;
@@ -10,7 +9,6 @@ const CreatePost = async (request, response) => {
 
     let directory = getImagesPath();
     let filename = Math.random().toString(16).slice(2);
-    let extension;
 
     try {
         makeDirIfNotExists(directory);
@@ -23,23 +21,11 @@ const CreatePost = async (request, response) => {
             if(!mime) {
                 throw new Error("mime é obrigatorio para o type base64");
             }
-            console.log("CONTROLLER", filename)
             filename = saveByBase64(filename, content, mime);
         }
         
         if(type === 'url') {
-            let response = await fetch(content);
-            let mimeType = response.headers.get('content-type');
-            extension = mimeTypeMap[mimeType];
-            if(!extension) {
-                throw new Error("Tipo de arquivo da url inválido");
-            }
-            let buffer = await response.arrayBuffer();
-            buffer = Buffer.from(buffer, 'binary');
-            filename = `${filename}.${extension}`;
-            fs.writeFileSync(`${directory}/${filename}`, buffer, {
-                encoding: 'binary'
-            });
+            filename = await saveByUrl(filename, content);
         }
 
         let post = await PostsModel.create({

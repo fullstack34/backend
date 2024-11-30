@@ -2,12 +2,16 @@ const UserModel = require('../models/UserModel');
 
 const CreateUser = async (request, response) => {
     try {
-        await UserModel.create(request.body);
+        let user = await UserModel.create(request.body);
+        user.setDataValue('password', undefined);
         response.status(201);
-        return response.json({message: "Usuario criado com sucesso"});
+        return response.json(user);
     } catch (error) {
-        console.log(error.message);
+        console.log(error);
         response.status(400);
+        if(Array.isArray(error.errors) && error.errors.length > 0) {
+            return response.json({message: error.errors[0].message})
+        }
         return response.json({message: "Erro ao criar usuario"});
     }
 }
