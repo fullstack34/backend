@@ -9,7 +9,8 @@ const {
 } = require('./controllers/UserController');
 
 const {
-    CreatePost
+    CreatePost,
+    ListPosts
 } = require('./controllers/PostController');
 
 app.get('/', (request, response) => {
@@ -21,6 +22,7 @@ app.get('/users/:id', UserById);
 app.post('/users', CreateUser);
 app.put('/users/:id', UpdateUser);
 app.delete('/users/:id', DeleteUser);
+app.get('/posts', ListPosts);
 
 app.post("/posts", CreatePost);
 

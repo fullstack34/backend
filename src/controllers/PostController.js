@@ -5,7 +5,7 @@ const {saveByBase64, saveByUrl} = require('../service/ImageUpload');
 
 const CreatePost = async (request, response) => {
     let {type, mime, content} = request.body.image;
-    let {user_id, title} = request.body;
+    let {user_id, title, content: postContent} = request.body;
 
     let directory = getImagesPath();
     let filename = Math.random().toString(16).slice(2);
@@ -31,7 +31,8 @@ const CreatePost = async (request, response) => {
         let post = await PostsModel.create({
             user_id,
             title,
-            image: filename
+            image: filename,
+            content: postContent
         });
 
         return response.json(post);
@@ -45,6 +46,12 @@ const CreatePost = async (request, response) => {
     }
 }
 
+const ListPosts = async (request, response) => {
+    let posts = await PostsModel.findAll();
+    return response.json(posts);
+}
+
 module.exports = {
-    CreatePost
+    CreatePost,
+    ListPosts
 };
