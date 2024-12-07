@@ -7,7 +7,7 @@ PostsModel.belongsTo(UserModel, {foreignKey: 'user_id'});
 
 async function execute() {
 
-  let recentUser = await UserModel.create({
+  /*let recentUser = await UserModel.create({
     firstname: 'Joaquim',
     surname: 'da Silva',
     username: 'joaquim' + Math.random().toString(16).slice(2),
@@ -19,11 +19,13 @@ async function execute() {
     user_id: recentUser.id,
     title: "Aprendendo CSS",
     content: "Lorem ipsum dolor sit amet, consectetur adip"
-  });
+  });*/
 
   let post = await PostsModel.findOne({
     include: UserModel
   });
+
+  console.log(post.toJSON());
 
 
 

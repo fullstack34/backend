@@ -23,6 +23,12 @@ let UserModel = connection.define("UserModel", {
   password: {
     type: DataTypes.STRING(255),
     allowNull: false
+  },
+  fullname: {
+    type: DataTypes.VIRTUAL,
+    get() {
+      return `${this.getDataValue('firstname')} ${this.getDataValue('surname')}`
+    }
   }
 }, {
   tableName: 'users'

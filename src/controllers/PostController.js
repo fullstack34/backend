@@ -1,11 +1,14 @@
 const fs = require('fs');
 const PostsModel = require('../models/PostsModel');
+const UserModel = require('../models/UserModel');
 const {getImagesPath, makeDirIfNotExists} = require('../ultils/PathHandler');
 const {saveByBase64, saveByUrl} = require('../service/ImageUpload');
 
+PostsModel.belongsTo(UserModel, {foreignKey: 'user_id', as: 'author'});
+
 const CreatePost = async (request, response) => {
     let {type, mime, content} = request.body.image;
-    let {user_id, title, content: postContent} = request.body;
+    let {user_id, title, content: postContent, slug} = request.body;
 
     let directory = getImagesPath();
     let filename = Math.random().toString(16).slice(2);
@@ -31,6 +34,7 @@ const CreatePost = async (request, response) => {
         let post = await PostsModel.create({
             user_id,
             title,
+            slug,
             image: filename,
             content: postContent
         });
@@ -47,7 +51,13 @@ const CreatePost = async (request, response) => {
 }
 
 const ListPosts = async (request, response) => {
-    let posts = await PostsModel.findAll();
+    let posts = await PostsModel.findAll({
+        include: {
+            model: UserModel,
+            attributes: ["username", "firstname", "surname", "fullname"],
+            as: 'author'
+        }
+    });
     return response.json(posts);
 }
 

@@ -19,10 +19,16 @@ const PostsModel = connection.define('PostsModel', {
   },
   slug: {
     type: DataTypes.STRING(255),
-    allowNull: true
+    allowNull: false,
+    unique: true
   },
   content: DataTypes.TEXT,
-  image: DataTypes.STRING(255)
+  image: {
+    type: DataTypes.STRING(255),
+    get() {
+      return `http://localhost:3000/public/images/${this.getDataValue('image')}`;
+    }
+  }
 }, {
   tableName: 'posts'
 });
