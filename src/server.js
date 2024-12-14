@@ -11,8 +11,16 @@ const {
 
 const {
     CreatePost,
-    ListPosts
+    ListPosts,
+    PostBySlug
 } = require('./controllers/PostController');
+
+const {
+    CreateTag,
+    ListTags,
+    UpdateTag,
+    DeleteTag
+} = require('./controllers/TagsController');
 
 app.get('/', (request, response) => {
     response.end("Api backend do blog 2");
@@ -26,7 +34,12 @@ app.delete('/users/:id', DeleteUser);
 app.get('/posts', ListPosts);
 
 app.post("/posts", CreatePost);
+app.get('/posts/:slug', PostBySlug);
 
+app.post("/tags", CreateTag);
+app.get('/tags', ListTags);
+app.delete('/tags/:id', DeleteTag);
+app.put('/tags/:id', UpdateTag)
 
 
 
