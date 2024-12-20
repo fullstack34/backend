@@ -32,15 +32,10 @@ const PostsModel = connection.define('PostsModel', {
   date: {
     type: DataTypes.VIRTUAL,
     get() {
-      
-const createdAt = new Date(this.getDataValue('createdAt'));
-const day = String(createdAt.getDate()).padStart(2, '0');
-const month = String(createdAt.getMonth() + 1).padStart(2, '0');
-const year = createdAt.getFullYear();
-
-return `${day}/${month}/${year}`;
+      const createdAt = new Date(this.getDataValue('createdAt'));
+      return createdAt.toLocaleDateString('pt-BR');
     }
-  }
+  }  
 }, {
   tableName: 'posts'
 });
