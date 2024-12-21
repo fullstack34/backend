@@ -16,6 +16,29 @@ const CreateUser = async (request, response) => {
     }
 }
 
+const CreateToken = async (request, response) => {
+
+    let {email, password} = request.body;
+
+    let user = await UserModel.findOne({
+        where: {email, password}
+    });
+
+    if(!user.id) {
+        return response.json({
+            message: "Usuario não encontrado"
+        });
+    }
+
+    let expirate = Date.now() + 3600;
+    let current = Date.now();
+
+    return response.json({
+        token: btoa(`${user.email}:${user.password}:${expirate}:${current}`)
+    })
+
+}
+
 const ListUsers = async (request, response) => {
     try {
         const users = await UserModel.findAll({
@@ -105,5 +128,5 @@ const DeleteUser = async (request, response) => {
 
 module.exports = {
     ListUsers, UserById, CreateUser,
-    UpdateUser, DeleteUser
+    UpdateUser, DeleteUser, CreateToken
 };

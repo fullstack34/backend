@@ -5,60 +5,8 @@ app.use(express.json());
 app.use(cors());
 app.use('/public', express.static('static'));
 const fs = require('fs');
-const {
-    ListUsers, UserById, CreateUser, UpdateUser, DeleteUser
-} = require('./controllers/UserController');
 
-const {
-    CreatePost,
-    ListPosts,
-    PostBySlug
-} = require('./controllers/PostController');
-
-const {
-    CreateTag,
-    ListTags,
-    UpdateTag,
-    DeleteTag
-} = require('./controllers/TagsController');
-
-app.get('/', (request, response) => {
-    response.end("Api backend do blog 2");
-});
-
-app.get('/users', ListUsers);
-app.get('/users/:id', UserById);
-app.post('/users', CreateUser);
-app.put('/users/:id', UpdateUser);
-app.delete('/users/:id', DeleteUser);
-app.get('/posts', ListPosts);
-
-app.post("/posts", CreatePost);
-app.get('/posts/:slug', PostBySlug);
-
-app.post("/tags", CreateTag);
-app.get('/tags', ListTags);
-app.delete('/tags/:id', DeleteTag);
-app.put('/tags/:id', UpdateTag)
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- * Exemplo de rota que retorna o conteudo frontend
- */
-app.get('/contato', (request, response) => {
-    let content = fs.readFileSync(__dirname + '/view/contato.html');
-    response.end(content);
-});
+const routes = require('./routes/routes');
+app.use(routes);
 
 app.listen(3000);   

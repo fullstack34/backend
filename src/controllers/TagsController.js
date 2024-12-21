@@ -5,7 +5,7 @@ const CreateTag = async (request, response) => {
     return response.json(tag);
 }
 
-const ListTags = async (request, response) => {
+const ListTags = async (request, response, next) => {
     let tags = await TagsModel.findAll();
     return response.json(tags);
 }
