@@ -28,7 +28,14 @@ const PostsModel = connection.define('PostsModel', {
     get() {
       return `http://localhost:3000/public/images/${this.getDataValue('image')}`;
     }
-  }
+  },
+  date: {
+    type: DataTypes.VIRTUAL,
+    get() {
+      const createdAt = new Date(this.getDataValue('createdAt'));
+      return createdAt.toLocaleDateString('pt-BR');
+    }
+  }  
 }, {
   tableName: 'posts'
 });
