@@ -1,0 +1,29 @@
+1) befs34
+
+1.1) models/UserModel.js
+   - criei campo image 
+
+1.2) database/sync.js
+   - await UserModel.sync({alter: true});
+
+1.3) controllers/UserController
+   - acresci algumas importações no topo
+   - criei função UploadImage
+
+1.4) server.js
+   - const {ListUsers, UserById, CreateUser, UpdateUser, DeleteUser, UploadImage} = require('./controllers/UserController');
+   - app.put('/users/image/:id', UploadImage);
+
+2) Insomnia
+
+2.1) Criação de dois novos http request:
+   - Image User (by base64)
+   - Image User (by url)
+
+3) Rodar o sync
+   - npm run sync
+
+Podcast Humanidade - 2º episódio
+Você marca as trajetórias
+Matheus
+Olivenor fala que somos Espíritos

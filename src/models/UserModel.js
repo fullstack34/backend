@@ -37,9 +37,7 @@ let UserModel = connection.define(
     image: {
       type: DataTypes.STRING(255),
       get() {
-        return `http://localhost:3000/public/images/${this.getDataValue(
-          "image"
-        )}`;
+        return this.getDataValue("image") ? `http://localhost:3000/public/images/${this.getDataValue("image")}` : undefined;
       },
     },
   },
