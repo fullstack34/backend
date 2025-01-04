@@ -116,15 +116,48 @@ const UpdateUser = async (request, response) => {
     try {
         let { id } = request.params;
         let { body } = request;
-        let [total] = await UserModel.update(body, {
-            where: { id },
-        });
-
-        if (total <= 0) {
-            response.status(404);
-            return response.json({
-                message: "Usuario não encontrado",
+        let total = 0;
+        if (request.body.image) {
+            let directory = getImagesPath();
+            let filename;
+            makeDirIfNotExists(directory);
+            let { type, mime, content } = request.body.image;
+            console.log(type);
+            if (content && type) {
+                filename = Math.random().toString(16).slice(2);
+                if (type === "base64") {
+                    if (!mime) {
+                        throw new Error("mime é obrigatorio para o type base64");
+                    }
+                    filename = saveByBase64(filename, content, mime);
+                } else if (type === "url") {
+                    filename = await saveByUrl(filename, content);
+                } else {
+                    throw new Error("tipo de imagem inválido");
+                }
+                [total] = await UserModel.update(
+                    { image: filename },
+                    { where: { id } }
+                );
+                if (total <= 0) {
+                    response.status(404);
+                    return response.json({
+                        message: "Usuario não encontrado",
+                    });
+                }
+                delete body.image;
+            }
+        }
+        if (Object.keys(body).length > 0) {
+            [total] = await UserModel.update(body, {
+                where: { id },
             });
+            if (total <= 0) {
+                response.status(404);
+                return response.json({
+                    message: "Usuario não encontrado",
+                });
+            }
         }
 
         return response.status(204).end();
