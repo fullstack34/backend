@@ -1,4 +1,5 @@
 const UserModel = require('../models/UserModel');
+const jwt = require('jsonwebtoken');
 
 const CreateUser = async (request, response) => {
     try {
@@ -24,18 +25,17 @@ const CreateToken = async (request, response) => {
         where: {email, password}
     });
 
-    if(!user.id) {
+    if(!user?.id) {
         return response.json({
             message: "Usuario não encontrado"
         });
     }
 
-    let expirate = Date.now() + 3600;
-    let current = Date.now();
+    let token = jwt.sign({
+        id: user.id
+    }, process.env.SECRET, {expiresIn: '1h'});
 
-    return response.json({
-        token: btoa(`${user.email}:${user.password}:${expirate}:${current}`)
-    })
+    return response.json({token});
 
 }
 
