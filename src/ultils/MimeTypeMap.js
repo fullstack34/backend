@@ -3,7 +3,8 @@ const mimeTypeMap = {
     "image/jpg": 'jpg',
     "image/jpeg": 'jpeg',
     "image/webp": 'webp',
-    "image/jfif": "jfif"
+    "image/jfif": "jfif",
+    "image/svg+xml": "svg"
 };
 
 const getExtensionByMimeType = (mimeType) => {

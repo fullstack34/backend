@@ -23,6 +23,8 @@ PrivateRoutes.use(async (request, response, next) => {
             throw new Error("Usuario não autorizado");
         }
 
+        request.body.user_id = decoded.id;
+
         return next();
 
     } catch(error) {
