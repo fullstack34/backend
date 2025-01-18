@@ -26,6 +26,7 @@ PrivateRoutes.use(async (request, response, next) => {
         return next();
 
     } catch(error) {
+        response.status(401);
         return response.json({
             message: error.message
         });
